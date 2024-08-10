@@ -15,6 +15,7 @@ import com.hmdp.utils.RegexUtils;
 import com.zhenzi.sms.ZhenziSmsClient;
 import lombok.extern.slf4j.Slf4j;
 
+
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -89,14 +90,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return Result.fail("手机号格式错误！");
         }
         // 3.从redis获取验证码并校验
-        String cacheCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + phone);
+        String cacheCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + phone); // KEY: login:code:phone
         String code = loginForm.getCode();
         if (cacheCode == null || !cacheCode.equals(code)) {
             // 不一致，报错
             return Result.fail("验证码错误");
         }
 
-        // 4.一致，根据手机号查询用户 select * from tb_user where phone = ?
+        // 4.一致，根据手机号查询用户是否已注册 select * from tb_user where phone = ?
         User user = query().eq("phone", phone).one();
 
         // 5.判断用户是否存在
@@ -133,6 +134,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Result signCount() {
         return null;
     }
+
+    /** 使用手机号创建新用户
+     *  param: phone手机号
+     *  return : User对象
+    */
     private User createUserWithPhone(String phone) {
         // 1.创建用户
         User user = new User();

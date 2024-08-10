@@ -67,6 +67,7 @@
             <version>3.13.6</version>
         </dependency>
 
+        <!-- 榛子云短信 -->
         <dependency>
             <groupId>com.zhenzikj</groupId>
             <artifactId>zhenzisms</artifactId>
